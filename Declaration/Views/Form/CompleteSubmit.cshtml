@@ -1,0 +1,94 @@
+﻿@model Declaration.ViewModel.Form.TravelDeclarationViewModel
+
+
+<div class="jumbotron">
+    <h1>@Resources.Resource.Thank_you</h1>
+    <p class="lead">@Resources.Resource.Complete_save</p>
+</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-body form-horizontal">
+        <div class="form-group row">
+            <label class="control-label col-sm-2">@Resources.Resource.Category</label>
+            <label style="text-align:left!important;" class="control-label col-sm-10">
+                @Html.DisplayFor(x => x.DeclarationDetail)
+            </label>
+        </div>
+
+        <div class="form-group row">
+            <label class="control-label col-sm-2">@Html.Raw(Model.LabelModel.BadgeId):</label>
+            <label style="text-align:left!important;" class="control-label col-sm-10">
+                @Html.DisplayFor(x => x.BadgeId)
+            </label>
+        </div>
+
+        <div class="form-group row">
+            <label class="control-label col-sm-2">@Html.Raw(Model.LabelModel.Name):</label>
+            <label style="text-align:left!important;" class="control-label col-sm-10">
+                @Html.DisplayFor(x => x.Name)
+            </label>
+        </div>
+
+
+        @if (Model.RelationshipList != null)
+        {
+            <hr />
+            foreach (var item in Model.RelationshipList)
+            {
+                <div class="form-group row">
+                    <label class="control-label col-sm-2">@Html.Raw(Model.LabelModel.TravelerName):</label>
+                    <label style="text-align:left!important;" class="control-label col-sm-2">
+                        @Html.DisplayFor(x => item.Name)
+                    </label>
+                    <label class="control-label col-sm-2">@Html.Raw(Model.LabelModel.Relationship):</label>
+                    <label style="text-align:left!important;" class="control-label col-sm-2">
+                        @Html.DisplayFor(x => item.Relationship)
+                    </label>
+                </div>
+            }
+            <hr />
+        }
+
+
+
+        <div class="form-group row">
+            <label class="control-label col-sm-2">@Html.Raw(Model.LabelModel.Destination):</label>
+            <label style="text-align:left!important;" class="control-label col-sm-10">
+                @Html.DisplayFor(x => x.Destination)
+            </label>
+        </div>
+
+        <div class="form-group row">
+            <label class="control-label col-sm-2">@Html.Raw(Model.LabelModel.StartDate):</label>
+            <label style="text-align:left!important;" class="control-label col-sm-10">
+                @Html.DisplayFor(x => x.StartDate)
+            </label>
+        </div>
+
+        <div class="form-group row">
+            <label class="control-label col-sm-2">@Html.Raw(Model.LabelModel.EndDate):</label>
+            <label style="text-align:left!important;" class="control-label col-sm-10">
+                @Html.DisplayFor(x => x.EndDate)
+            </label>
+        </div>
+
+        @if (String.IsNullOrEmpty(Model.TravelReason) == false)
+        {
+            <div class="form-group row">
+                <label class="control-label col-sm-2">@Html.Raw(Model.LabelModel.TravelReason):</label>
+                <label style="text-align:left!important;" class="control-label col-sm-10">
+                    @Html.DisplayFor(x => x.TravelReason)
+                </label>
+            </div>
+        }
+
+        <div class="form-group row">
+            <label class="control-label col-sm-2">@Html.Raw(Model.LabelModel.Remark):</label>
+            <label style="text-align:left!important;" class="control-label col-sm-10">
+                @Html.DisplayFor(x => x.AdditionalInformation)
+            </label>
+        </div>
+    </div>
+</div>
+

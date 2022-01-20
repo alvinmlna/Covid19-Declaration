@@ -1,0 +1,99 @@
+﻿@model PagedList.IPagedList<Declaration.ViewModel.Report.ReportViewModel>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+
+<h2>Report</h2>
+
+<div style="width: 500px; float: left;">
+    @using (Html.BeginForm("Index", "Report", FormMethod.Get))
+    {
+        <div class="form-group row">
+            <div class="col-md-5">
+                @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control", autocomplete = "off" })
+            </div>
+            <div class="col-md-2">
+                <input class="btn btn-primary" type="submit" value="Search" />
+            </div>
+        </div>
+    }
+</div>
+
+
+    <div style="float:right;padding-bottom:20px;">
+        @Html.ActionLink("Export report", "Export", null, new { @class = "btn btn-primary" })
+    </div>
+
+<table class="table">
+    <tr>
+        <th>
+            Badge Id
+        </th>
+        <th>
+            Name
+        </th>
+        <th>
+            Destination
+        </th>
+        <th>
+            Start Date
+        </th>
+        <th>
+            End Date
+        </th>
+        <th>
+            Remark
+        </th>
+        <th>
+            Approval Status
+        </th>
+        <th>
+            @Html.ActionLink("Date Submit", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.BadgeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Destination)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Remark)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateSubmit)
+            </td>
+            <td>
+                @if (string.IsNullOrEmpty(item.Attachment) == false)
+                {
+                    @Html.ActionLink("View Attachment", "ViewAttachement", new { id = item.Id }) 
+                }
+                |  @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))

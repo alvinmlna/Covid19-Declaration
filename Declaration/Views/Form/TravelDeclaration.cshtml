@@ -1,0 +1,328 @@
+﻿@model Declaration.ViewModel.Form.TravelDeclarationViewModel
+
+@{
+    ViewBag.Title = "View";
+}
+<style>
+    .btn {
+        height: calc(1.5em + 0.75rem + 2px);
+    }
+
+    .padding-0 {
+        padding-right: 0;
+        padding-left: 0;
+    }
+</style>
+
+<script type="text/javascript">
+
+    var currentCount = 0;
+
+
+    $(document).ready(function () {
+        var $fields = $('#fields');
+        $('#btnAddField').click(function (e) {
+            e.preventDefault();
+            if (currentCount >= 2) {
+                alert('@Resources.Resource.Relationship_not_more_than_2');
+            } else {
+                var label = "@Html.Raw(Model.LabelModel.TravelerName)";
+                var label2 = "@Html.Raw(Model.LabelModel.Relationship)";
+
+                $fields.append('<div id="relationshipDiv">' +
+                    "<div class='form-group row'>" +
+                    "<label class='control-label col-md-2'>" + label + "</label>" +
+                    "<div class='col-md-4'> " +
+                    " <input name='TravelerName' class='form-control text-box single-line' id='TravelerName' type='text' value=''></div>" +
+                    " <label class='control-label col-md-1'>" + label2 + "</label> " +
+                    " <div class='col-md-3'>" +
+                    "<input name='Relationship' class='form-control text-box single-line' id='Relationship' type='text' value='' >" +
+                    "</div>" +
+                    "<button  type='button' id='aua' class='btn btn-warning removeField'><i class='fa fa-times' aria-hidden='true'></i></button>" +
+                    '</div></div>'
+                );
+            }
+
+
+            currentCount += 1;
+            console.log(currentCount);
+        });
+
+        $fields.on("click", ".removeField", function (e) {
+            e.preventDefault();
+            currentCount -= 1;
+            $(this).closest('#relationshipDiv').remove()
+            return false;
+        });
+
+
+        function delay(callback, ms) {
+            var timer = 0;
+            return function () {
+                var context = this, args = arguments;
+                clearTimeout(timer);
+                timer = setTimeout(function () {
+                    callback.apply(context, args);
+                }, ms || 0);
+            };
+        }
+
+        $('#BadgeId').keyup(delay(function (e) {
+            $.ajax({
+                url: '@Url.Action("GetBadgeIdName", "Form")',
+                type: 'POST',
+                data: {
+                    badgeId: $(this).val()
+                },
+                success: function (_result) {
+                    $("#Name").val(_result.name);
+                    if (_result.superior != '') {
+                        $("#superiorField").show();
+                    } else {
+                        $("#superiorField").hide();
+                    }
+                    $("#Superior").val(_result.superior);
+                }
+            });
+
+        }, 500));
+    });
+
+</script>
+
+<h2>@ViewBag.Header</h2>
+
+@using (Html.BeginForm("SubmitTravelDeclaration", "Form", FormMethod.Post, new { @id = "formId", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>@ViewBag.Detail</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    @Html.HiddenFor(x => x.MainDestination)
+    @Html.HiddenFor(x => x.DeclarationDetailId)
+    @Html.HiddenFor(x => x.DeclarationTypeId)
+
+    <div class="form-group row">
+        <label class='control-label col-md-2'><span style="color: red;">*</span>@Html.Raw(Model.LabelModel.BadgeId)</label>
+        <div class="col-md-2">
+            @Html.EditorFor(model => model.BadgeId, new { htmlAttributes = new { @class = "form-control", autocomplete = "Off" } })
+        </div>
+        <div class="col-md-3">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div col-md-8>
+            @Html.ValidationMessageFor(model => model.BadgeId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+    <div class="form-group row" id="superiorField" style="display:none;">
+        <label class='control-label col-md-2'>Superior</label>
+        <div class="col-md-3">
+            @Html.Editor("Superior", new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+        </div>
+        <div class="offset-2 col-md-10">
+            <p>Silahkan hubungi admin jika superior anda tidak sesuai/<i>please contact admin if superior is not valid</i></p>
+            <ul>
+                <li>Ulya Diana Suci (IFBT BE POB SO A M PROD EOL)</li>
+                <li>Maulana Muhammad Alvin (IFBT BE POB SO T OE GL)</li>
+            </ul>
+        </div>
+
+    </div>
+
+    @if (Model.IsRelationshipRequired == true)
+    {
+        <div id="fields">
+            <div id="relationshipDiv">
+                <div class="form-group row">
+                    <label class='control-label col-md-2'><span style="color: red;">*</span>@Html.Raw(Model.LabelModel.TravelerName)</label>
+                    <div class="col-md-4">
+                        <input name="TravelerName" class="form-control text-box single-line" required="required" autocomplete="Off" id="TravelerName" type="text" value="">
+                    </div>
+                    <label class='control-label col-md-1'>@Html.Raw(Model.LabelModel.Relationship)</label>
+                    <div class="col-md-3">
+                        <input name="Relationship" class="form-control text-box single-line" required="required" autocomplete="Off" id="Relationship" type="text" value="">
+                    </div>
+
+                    <button id="btnAddField" type="button" class="btn btn-info"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="form-group row">
+        <label class='control-label col-md-2'><span style="color: red;">*</span>@Html.Raw(Model.LabelModel.Destination)</label>
+        <div class="col-md-4">
+            @Html.TextAreaFor(model => model.Destination, new { @class = "form-control", @rows = 4 })
+            @Html.ValidationMessageFor(model => model.Destination, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+    @*batas*@
+
+
+    <div class="col-md-12 row padding-0">
+        <div class="col-md-6">
+
+            @if (Model.WithVaccineStatus)
+            {
+                <div class="form-group row">
+                    <label class='control-label col-md-4'><span style="color: red;">*</span>Vaccination Status</label>
+                    <div class="col-md-8">
+                        @Html.DropDownList("VaccineStatus", new List<SelectListItem>
+                        {
+                            new SelectListItem{ Text="Fully Vaccinated", Value = "Fully Vaccinated" },
+                            new SelectListItem{ Text="Partially Vaccinated", Value = "Partially Vaccinated" },
+                            new SelectListItem{ Text="Un-Vaccinated (due to medical reason)", Value = "Un-Vaccinated (due to medical reason)" },
+                        }, new { @class = "form-control" })
+
+                    </div>
+                </div>
+            }
+
+            <div class="form-group row" style="margin-bottom:1rem;">
+                <label class='control-label col-md-4'><span style="color: red;">*</span>@Html.Raw(Model.LabelModel.StartDate)</label>
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group  row">
+                <label class='control-label col-md-4'><span style="color: red;">*</span>@Html.Raw(Model.LabelModel.EndDate)</label>
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            @if (Model.DeclarationTypeId == 1)
+            {
+                <div class="form-group  row">
+                    <label class='control-label col-md-4'><span style="color: red;">*</span>@Html.Raw(Model.LabelModel.TravelReason)</label>
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(model => model.TravelReason, new { @class = "form-control", @rows = 4 })
+                        @Html.ValidationMessageFor(model => model.TravelReason, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
+
+            <div class="form-group row">
+                <label class='control-label col-md-4'>@Html.Raw(Model.LabelModel.Remark)</label>
+                <div class="col-md-8">
+                    @Html.TextAreaFor(model => model.AdditionalInformation, new { @class = "form-control", @rows = 4 })
+                    @Html.ValidationMessageFor(model => model.AdditionalInformation, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group row  ">
+                <label class='control-label col-md-4'>@Html.Raw("Attachment </br> (Max 3 MB)")</label>
+                <div class="col-md-4">
+                    @Html.TextBoxFor(m => m.Attachment, new { type = "file", accept = ".jpg, .jpeg, .png, .pdf", @class = "fileUpload" })
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+
+
+
+        @if (Model.WithVaccineStatus)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                var style = "display:none;";
+
+                if (i == 0)
+                {
+                    style = "";
+                }
+
+                <div class="col-md-6" style="@style" id="showdesc_@i">
+                    <div class="form-group">
+                        <label class='control-label col-md-1'><b>Quarantine</b></label>
+                        <div class="col-md-10">
+                            @Html.Raw(Model.QuarantineList[i])
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class='control-label col-md-12'><b>COVID-19 test (PCR or Swab Antigen)</b></label>
+                        <div class="col-md-10">
+                            @Html.Raw(Model.PCRList[i])
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class='control-label col-md-1'><b>Quarantine</b></label>
+                    <div class="col-md-10">
+                        @Html.Raw(Model.Quarantine)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class='control-label col-md-12'><b>COVID-19 test (PCR or Swab Antigen)</b></label>
+                    <div class="col-md-10">
+                        @Html.Raw(Model.PCR)
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</div>
+
+    <script>
+        $(function () {
+            $("#formId").submit(function (event) {
+                ShowLoading();
+            });
+        });
+
+        $("#VaccineStatus").change(function () {
+
+            var _val = $("#VaccineStatus").val();
+            if (_val == "Fully Vaccinated") {
+                $("#showdesc_0").show();
+                $("#showdesc_1").hide();
+                $("#showdesc_2").hide();
+            } else if (_val == "Partially Vaccinated") {
+                $("#showdesc_0").hide();
+                $("#showdesc_1").show();
+                $("#showdesc_2").hide();
+            } else if (_val == "Un-Vaccinated (due to medical reason)") {
+                $("#showdesc_0").hide();
+                $("#showdesc_1").hide();
+                $("#showdesc_2").show();
+            }
+        });
+
+        //binds to onchange event of your input field
+        $('.fileUpload').bind('change', function (event) {
+            var targetId = "#" + event.target.id;
+            var fileLength = $(targetId).get(0).files.length;
+
+            if (fileLength != 0) {
+                for (var i = 0; i < fileLength; i++) {
+                    if (this.files[i].size > 3145728) {
+                        alert("Maximum upload file size is only 3 MB");
+                        $(targetId).replaceWith($(targetId).val('').clone(true))
+                    }
+                }
+            }
+        });
+    </script>
+
+}

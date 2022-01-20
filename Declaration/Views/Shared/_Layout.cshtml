@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covid-19 Declaration Tools</title>
+    @Styles.Render("~/Content/webComponent")
+    @Styles.Render("~/Content/cssjqryUi")
+    @Scripts.Render("~/bundles/modernizr")
+
+    @Scripts.Render("~/bundles/webComponentJS")
+    @Scripts.Render("~/bundles/jqueryui")
+
+    <style>
+        .loader {
+            margin: 200px auto;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+
+        /* Safari */
+        @@-webkit-keyframes spin {
+          0% { -webkit-transform: rotate(0deg); }
+          100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @@keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        .modal {
+            background-color: black;
+            opacity: 0.5;
+            position: relative;
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            height: 100%;
+            width: 100%;
+        }
+
+
+        /* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+        body.loading {
+            overflow: hidden;
+        }
+
+            /* Anytime the body has the loading class, our
+   modal element will be visible */
+            body.loading .modal {
+                display: block;
+            }
+
+    </style>
+
+</head>
+<body>
+    <script>
+        function ShowLoading() {
+            $('body').addClass("loading");
+        }
+    </script>
+    
+    <div class="modal">
+        <div class="loader"></div>
+    </div>
+
+    @Html.Action("Navbar", "Layout")
+    <div class="container body-content" style="padding-top:20px;padding-bottom:50px;">
+        @RenderBody()
+    </div>
+
+    <div class="footer bt-footer bg-info">
+        © Infineon Technologies Batam
+    </div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('input[type=datetime]').datepicker({
+                dateFormat: "dd/M/yy",
+                changeMonth: true,
+                changeYear: true,
+            });
+
+        });
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

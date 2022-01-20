@@ -1,0 +1,17 @@
+﻿@model IEnumerable<Declaration.ViewModel.DestinationViewModel>
+
+<div class="jumbotron">
+    <h1 class="display-4">@Resources.Home.Select_declaration_detail</h1>
+</div>
+
+<p>@Resources.Home.Please_select:</p>
+<hr />
+<div style="width:100%;">
+    @foreach (var item in Model)
+    {
+        <button class="btn btn-light btn-block" style="text-align:left;" type="button" id="addressSearch"
+                onclick="location.href='@Url.Action("SelectDetail", "Form", new { id = item.Id, maindestination  = item.Destination})'">
+            @Html.Raw(item.Destination)
+        </button>
+    }
+</div>

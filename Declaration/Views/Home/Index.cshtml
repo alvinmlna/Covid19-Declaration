@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Declaration.ViewModel.DeclarationTypeViewModel>
+
+<div style="padding:5px;text-align:right;">
+    @Resources.Home.Language:
+    @Html.ActionLink("English", "ChangeLanguage", "Home", new { @lang = "en" }, (ViewBag.currLanguage == "en") ? new { style = "font-weight:bold!important;" } : new { style = "" })
+    @Html.ActionLink("Indonesia", "ChangeLanguage", "Home", new { @lang = "id" }, (ViewBag.currLanguage == "id") ? new {  style = "font-weight:bold!important;" } : new { style = "" })
+
+</div>
+
+<div class="jumbotron">
+    <h1 class="display-4">@Resources.Home.Select_Declaration_Type</h1>
+</div>
+
+
+<p>@Resources.Home.Please_select:</p>
+<hr />
+<div style="width:400px;">
+    @foreach (var item in Model)
+    {
+        <button class="btn btn-primary btn-block" type="button" id="addressSearch"
+                onclick="location.href='@Url.Action("SelectType", "Home", new { id = item.DeclarationTypeId})'">
+            @item.DeclarationType
+            </button>
+        }
+</div>
